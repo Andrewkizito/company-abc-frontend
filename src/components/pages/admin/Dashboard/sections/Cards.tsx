@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Importing helper functions
 import propTypes from 'prop-types'
 
@@ -47,7 +48,7 @@ const Card: React.FC<CartProps> = ({ title, count, Icon }) => (
 
 Card.propTypes = {
   title: propTypes.string.isRequired,
-  count: propTypes.number.isRequired,
+  count: propTypes.oneOfType([propTypes.string,propTypes.number]).isRequired,
   Icon: propTypes.any.isRequired
 }
 

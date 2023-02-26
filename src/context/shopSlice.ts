@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Importing helper modules
 import { createSlice, type PayloadAction, type Slice } from '@reduxjs/toolkit'
 
@@ -60,7 +61,7 @@ const ShopSlice: Slice = createSlice({
         (item) => item.productName === action.payload.productName
       )[0]
 
-      const isItemAvailable: boolean = Boolean(targetItem)
+      const isItemAvailable = Boolean(targetItem)
       if (!isItemAvailable) return
       let newCart: CartItem[]
       if (targetItem.quantity < 2) {
@@ -127,7 +128,7 @@ const ShopSlice: Slice = createSlice({
     },
     initCart: (state: ShopState, action) => {
       const cart: string | null = localStorage.getItem('cart')
-      const cartValidity: boolean = Boolean(cart)
+      const cartValidity = Boolean(cart)
       if (cartValidity) {
         if (typeof cart === 'string') {
           const parsedCart = JSON.parse(cart)

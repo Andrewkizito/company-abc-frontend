@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { type AxiosInstance } from 'axios'
 
 export const api: AxiosInstance = axios.create({
@@ -12,9 +13,9 @@ export function updateState (field: string, value: string | number, updateFuncti
 }
 
 export function validateObject (data: Record<string, string | number>): boolean {
-  let validity: boolean = true
+  let validity = true
   for (const key in data) {
-    const valueToBoolean: boolean = Boolean(data[key])
+    const valueToBoolean = Boolean(data[key])
     if (valueToBoolean) validity = false
   }
   return validity
@@ -23,3 +24,4 @@ export function validateObject (data: Record<string, string | number>): boolean 
 export function getImageUrl (key: string): string {
   return `http://localhost:5000/images/${key}`
 }
+

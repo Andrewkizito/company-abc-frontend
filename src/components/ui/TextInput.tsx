@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Importing helper functions
 import propTypes from 'prop-types'
 
