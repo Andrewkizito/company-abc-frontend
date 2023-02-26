@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Importing helper functions
 import { updateState } from 'src/utils/modules'
 import propTypes from 'prop-types'
@@ -6,15 +7,12 @@ import propTypes from 'prop-types'
 import { Box, Typography } from '@mui/material'
 import TextInput from 'src/components/ui/TextInput'
 
-type PlainFunction = () => void
-
 interface FormProps {
-  form: Record<string, string>
-  setForm: PlainFunction
+  form: {[key:string]: string | number }
+  setForm: any
 }
 
 const Form: React.FC<FormProps> = ({ form, setForm }) => {
-  console.log(form)
 
   return (
     <Box py={'1.5rem'}>

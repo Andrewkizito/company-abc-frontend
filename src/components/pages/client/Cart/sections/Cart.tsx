@@ -69,6 +69,7 @@ const Cart: React.FC = () => {
                     onClick={() =>
                       dispatch(removeItemFromCart(item.productName))
                     }
+                    variant="text"
                     color="error"
                     size="small"
                     sx={{ textTransform: 'capitalize' }}

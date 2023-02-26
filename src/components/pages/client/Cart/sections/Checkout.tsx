@@ -1,6 +1,5 @@
 // Importing helper functions
 import { type CartItem } from 'src/context/shopSlice'
-import { validateObject } from 'src/utils/modules'
 import { useMemo, useState } from 'react'
 import propTypes from 'prop-types'
 
@@ -36,13 +35,25 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
   // User details state
   const [form, setForm] = useState<{
     name: string
-    phone_number: string
+    phoneNumber: string
     location: string
   }>({
     name: '',
     location: '',
-    phone_number: ''
+    phoneNumber: ''
   })
+
+  //Get form state
+  const formIsValid:boolean = useMemo(() => {
+    let validity = true
+    for(const key in form){
+      const value: string = form[key as keyof typeof form]
+      if(value === ''){
+        validity = false
+      }
+    }
+    return  validity
+  }, [form])
 
   // Calculating total cost of all items in cart.
   const totalPrice: number = useMemo(() => {
@@ -51,7 +62,6 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
     return result
   }, [cart])
 
-  const checkValidity: () => boolean = (): boolean => validateObject(form)
 
   return (
     <Box my={'0.4rem'} py={'1rem'}>
@@ -62,7 +72,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
           </Step>
         ))}
       </Stepper>
-      {activeStep === 0 && <Form form={form} setForm={() => setForm} />}
+      {activeStep === 0 && <Form form={form} setForm={setForm} />}
       {activeStep === 1 && (
         <Summary
           loading={loading}
@@ -83,7 +93,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
         </Button>
         <Button
           onClick={() => {
-            if (checkValidity()) setStep((prevValue) => prevValue + 1)
+            if (formIsValid) setStep((prevValue) => prevValue + 1)
             else {
               Store.addNotification({
                 ...notificationsTheme,
@@ -94,7 +104,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
               })
             }
           }}
-          disabled={activeStep === 1 || loading}
+          disabled={activeStep === 1 || loading || !formIsValid}
           color="inherit"
         >
           <Typography variant="body2">Next</Typography>
