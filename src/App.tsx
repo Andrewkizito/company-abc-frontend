@@ -58,8 +58,10 @@ const App: React.FC = () => {
         .then((res: AxiosResponse) => {
           if (res.data === true) {
             dispatch(authSuccess(parsedToken))
-            navigate(currentPath)
           } else {
+            if(currentPath.startsWith('/admin')){
+              navigate('/admin')
+            }
             localStorage.removeItem('authToken')
           }
         })
