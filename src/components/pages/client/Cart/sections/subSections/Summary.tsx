@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Importing helper functions
 import { api } from 'src/utils/modules'
 import { type CartItem, clearCart } from 'src/context/shopSlice'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import propTypes from 'prop-types'
 
 // Importing core components
@@ -9,7 +11,7 @@ import {
   LocationCityOutlined,
   MonetizationOnOutlined,
   Person,
-  PhoneAndroidOutlined
+  PhoneAndroidOutlined,
 } from '@mui/icons-material'
 import {
   Box,
@@ -19,21 +21,23 @@ import {
   List,
   ListItem,
   ListItemText,
-  Typography
+  Typography,
 } from '@mui/material'
 import { Spinner } from 'react-activity'
 import { type AxiosResponse } from 'axios'
 import { Store } from 'react-notifications-component'
 import { notificationsTheme } from 'src/utils/theme'
 
-type PlainFunction = (value: boolean) => void
+// Function Interface
+type PlainFunction = (value: boolean) => void;
 
+// Defining Component Props
 interface SummaryProps {
-  form: Record<string, string>
-  cart: CartItem[]
-  totalPrice: number
-  loading: boolean
-  setLoading: PlainFunction
+  form: Record<string, string>;
+  cart: CartItem[];
+  totalPrice: number;
+  loading: boolean;
+  setLoading: PlainFunction;
 }
 
 const Summary: React.FC<SummaryProps> = ({
@@ -41,28 +45,56 @@ const Summary: React.FC<SummaryProps> = ({
   cart,
   totalPrice,
   loading,
-  setLoading
+  setLoading,
 }) => {
+  // Function to trigger action on global state
   const dispatch = useDispatch()
 
-  function placeOrder (): void {
+  // Function for navigation
+  const navigate = useNavigate()
+
+  // Place order function
+  function placeOrder(): void {
+    // Start loading
+    setLoading(true)
+
+    // Generating paylaod
     const payload: any = {
       ...form,
       totalPrice,
-      cart
+      cart,
     }
 
-    api.post('/orders', payload).then((res: AxiosResponse) => {
-      console.log(res)
-    }).catch((err: any) => {
-      Store.addNotification({
-        ...notificationsTheme,
-        type: 'danger',
-        title: 'Error',
-        message: err.message
+    //Sending order request to backend
+    api
+      .post('/orders', payload)
+      .then((res: AxiosResponse) => {
+        //Showing success notification
+        Store.addNotification({
+          ...notificationsTheme,
+          type: 'success',
+          title: 'Done',
+          message: res.data,
+          //Clearing cart once the notification has been removed
+          onRemoval: () => {
+            dispatch(clearCart(null))
+            navigate('/')
+          },
+        })
       })
-      dispatch(clearCart(null))
-    }).finally(() => { setLoading(true) })
+      .catch((err: any) => {
+        // Showing error notification
+        Store.addNotification({
+          ...notificationsTheme,
+          type: 'danger',
+          title: 'Error',
+          message: err.response.data,
+        })
+      })
+      .finally(() => {
+        // Stopping loading once promise has resolved
+        setLoading(false)
+      })
   }
 
   return (
@@ -82,7 +114,7 @@ const Summary: React.FC<SummaryProps> = ({
               </IconButton>
               <ListItemText
                 primary={'Phone Number'}
-                secondary={form.phone_number}
+                secondary={form.phoneNumber}
               />
             </ListItem>
             <ListItem>
@@ -112,7 +144,7 @@ const Summary: React.FC<SummaryProps> = ({
               sx={{
                 p: '1rem',
                 my: '0.5rem',
-                bgcolor: '#f4f4f4'
+                bgcolor: '#f4f4f4',
               }}
             >
               <Box>
@@ -156,12 +188,13 @@ const Summary: React.FC<SummaryProps> = ({
   )
 }
 
+// Components PropTypes
 Summary.propTypes = {
   form: propTypes.any.isRequired,
   cart: propTypes.array.isRequired,
   loading: propTypes.bool.isRequired,
   setLoading: propTypes.func.isRequired,
-  totalPrice: propTypes.number.isRequired
+  totalPrice: propTypes.number.isRequired,
 }
 
 export default Summary
