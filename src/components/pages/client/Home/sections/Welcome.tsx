@@ -1,5 +1,6 @@
 // Importing core components
 import { Box, Button, Container, Grid, Typography } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 const Welcome: React.FC = () => {
   return (
@@ -11,7 +12,7 @@ const Welcome: React.FC = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       }}
     >
       <Container maxWidth="lg">
@@ -30,25 +31,15 @@ const Welcome: React.FC = () => {
               pharetra nunc odio dignissim arcu. Etiam id semper mi. Mauris
               placerat felis ipsum, a finibus erat accumsan pellentesque.
             </Typography>
-            <Button
-              size="large"
-              variant="contained"
-              sx={{ textTransform: 'capitalize', width: 200, mr: '1rem' }}
-            >
-              Place Order
-            </Button>
-            <Button
-              color="inherit"
-              size="large"
-              variant="contained"
-              sx={{
-                textTransform: 'capitalize',
-                width: 200,
-                mt: { xs: 2, sm: 2, md: 0 }
-              }}
-            >
-              Track Order
-            </Button>
+            <Link to="#products">
+              <Button
+                size="large"
+                variant="contained"
+                sx={{ textTransform: 'capitalize', width: 200, mr: '1rem' }}
+              >
+                Place Order
+              </Button>
+            </Link>
           </Grid>
         </Grid>
       </Container>
