@@ -11,6 +11,7 @@ import { notificationsTheme } from 'src/utils/theme'
 import { Store } from 'react-notifications-component'
 import Product from 'src/components/ui/Product'
 import Loader from 'src/components/ui/Loader'
+import NoData from 'src/components/ui/NoData'
 
 const Products: React.FC = () => {
   // Intializing dispatch
@@ -31,30 +32,46 @@ const Products: React.FC = () => {
         .get('/products', { headers: { Authorization: 'hello' } })
         .then((res: AxiosResponse) => dispatch(initShop(res.data)))
         .catch((err) => {
-          const erroMessage: string = err.response ? err.response.data : err.message
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: erroMessage
+            message: erroMessage,
           })
         })
-        .finally(() => { setLoading(false) })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [loading, dispatch])
 
-  if (loading) return <Loader label="Loading Products, Please Wait" />
 
   return (
-    <Box sx={{ py: '3rem' }}>
+    <Box sx={{ py: '3rem' }} id="#products">
       <Container maxWidth="lg">
-        <Grid container spacing={3}>
-          {items?.map((item, i) => (
-            <Grid item key={i} xs={12} sm={6} md={4}>
-              <Product {...item} />
-            </Grid>
-          ))}
-        </Grid>
+        {loading ? (
+          <Loader label="Loading products please wait" />
+        ) : (
+          <>
+            {items ? (
+              <Grid container spacing={3}>
+                {items?.map((item, i) => (
+                  <Grid item key={i} xs={12} sm={6} md={4}>
+                    <Product {...item} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <NoData
+                label="No products available"
+                refetch={(value) => setLoading(value)}
+              />
+            )}
+          </>
+        )}
       </Container>
     </Box>
   )
