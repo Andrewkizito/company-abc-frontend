@@ -9,6 +9,7 @@ After cloning this project, there are several scripts available that you can use
 - Nodejs - (min verison 17x)
 
 ### Available scripts
+
 #### `npm install`
 
 Installs all the projects dependencies.
