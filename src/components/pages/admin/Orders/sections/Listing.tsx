@@ -167,6 +167,41 @@ const OrderListing: React.FC<OrderListingProps> = ({ data, refetch }) => {
     }
   }
 
+  // Delete Order function
+  function deleteOrder(id: string): void {
+    if (id) {
+      //Start loading
+      setLoading('Deleting Order, Please Wait')
+      //Sending credentials to backend for authentication
+      api
+        .delete('orders/', { headers: { Authorization: token },data: {  _id: id} })
+        .then((res: AxiosResponse) => {
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'success',
+            title: 'Done',
+            message: res.data,
+            onRemoval: () => refetch(true),
+          })
+        })
+        .catch((err) => {
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'danger',
+            title: 'Error',
+            message: erroMessage,
+          })
+        })
+        .finally(() => {
+          //Stop loading
+          setLoading('')
+        })
+    }
+  }
+
   //Complete Order function
   function completeOrder(id: string): void {
     if (id) {
@@ -291,6 +326,7 @@ const OrderListing: React.FC<OrderListingProps> = ({ data, refetch }) => {
               activeSlot={dataMapping[value].toLocaleLowerCase()}
               addActions={value === 0 && true}
               approveOrder={approveOrder}
+              deleteOrder={deleteOrder}
               completeOrder={completeOrder}
               rejectOrder={(id: string, reason: string) =>
                 rejectOrder(id, reason)
