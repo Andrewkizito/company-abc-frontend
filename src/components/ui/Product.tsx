@@ -15,6 +15,7 @@ const Product: React.FC<ShopItem> = ({
   image,
   unit
 }) => {
+  // Function to dispatch actions
   const dispatch = useDispatch()
 
   return (
