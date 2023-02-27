@@ -1,17 +1,31 @@
-//  Importing helper modules
+//  Importing helper fucntion
 import { api } from './utils/modules'
-import React, { useMemo, useEffect, useCallback } from 'react'
-import generateRoutes, { type AppRoute } from './utils/routes'
 import { type AuthState, authSuccess } from './context/authSlice'
 import { type AxiosResponse } from 'axios'
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom'
 import { initCart } from './context/shopSlice'
 import { ReactNotifications } from 'react-notifications-component'
 import { useDispatch, useSelector } from 'react-redux'
+import React, { useMemo, useEffect, useCallback } from 'react'
+import generateRoutes, { type AppRoute } from './utils/routes'
 
 const App: React.FC = () => {
+  // Function to dispatch actions
   const dispatch = useDispatch()
+
+  // Navigation function
+  const navigate = useNavigate()
+
+  // Getting current path
   const { pathname } = useLocation()
+
+  // Getting current authentication state
   const { isAuthenticated } = useSelector(
     (state: { auth: AuthState }) => state.auth
   )
@@ -23,7 +37,7 @@ const App: React.FC = () => {
     } else return '/'
   }, [pathname])
 
-  // Generating routes
+  // Generating routes depending on authentication state
   const routes: AppRoute[] = useMemo(
     () => generateRoutes(isAuthenticated),
     [isAuthenticated]
@@ -34,6 +48,9 @@ const App: React.FC = () => {
     // Getting token from localstorage
     const token: string | null = localStorage.getItem('authToken')
 
+    // Saving current path
+    const currentPath: string = pathname
+
     if (token !== null) {
       const parsedToken = JSON.parse(token)
       api
@@ -41,18 +58,26 @@ const App: React.FC = () => {
         .then((res: AxiosResponse) => {
           if (res.data === true) {
             dispatch(authSuccess(parsedToken))
+            navigate(currentPath)
           } else {
             localStorage.removeItem('authToken')
           }
-        }).catch(err => { console.log(err) })
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     }
   }, [dispatch])
 
   useEffect(() => {
     initializeApp()
-    const interval = setInterval(() => { initializeApp() }, 10000)
+    const interval = setInterval(() => {
+      initializeApp()
+    }, 10000)
 
-    return () => { clearInterval(interval) }
+    return () => {
+      clearInterval(interval)
+    }
   }, [initializeApp])
 
   return (
