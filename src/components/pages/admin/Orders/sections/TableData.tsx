@@ -1,4 +1,5 @@
 // Importing helper modules
+import { useMemo } from 'react'
 import { Order, Orders, OrderStatus } from '../Orders'
 import propTypes from 'prop-types'
 
@@ -20,6 +21,7 @@ type RejectionFunction = (id: string, reason: string) => void;
 
 interface TableDataProps {
   data: Orders;
+  activeSlot: string;
   addActions: boolean;
   approveOrder?: ApprovalFunction;
   rejectOrder?: RejectionFunction;
@@ -46,9 +48,23 @@ function generateTableRow(data: Order): TableRow {
 const TableData: React.FC<TableDataProps> = ({
   data,
   addActions,
+  activeSlot,
   approveOrder,
   rejectOrder,
 }) => {
+
+  // Generating data depending on active slot
+  const currentDataSet: Order[] = useMemo(
+    () => {
+     const currentData = data[activeSlot as keyof typeof data]
+     if(typeof currentData === 'number'){
+      return []
+     } 
+     return currentData
+    },
+    [activeSlot]
+  )
+
   return (
     <Table
       sx={{
@@ -90,7 +106,7 @@ const TableData: React.FC<TableDataProps> = ({
         </TableRow>
       </TableHead>
       <TableBody>
-        {data.pending
+        {currentDataSet
           .map((item) => generateTableRow(item))
           .map((row) => (
             <TableRow
@@ -155,6 +171,7 @@ const TableData: React.FC<TableDataProps> = ({
 
 TableData.propTypes = {
   data: propTypes.any.isRequired,
+  activeSlot: propTypes.any.isRequired,
   addActions: propTypes.bool.isRequired,
   approveOrder: propTypes.func,
   rejectOrder: propTypes.func,
