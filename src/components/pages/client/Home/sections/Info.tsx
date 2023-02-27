@@ -38,7 +38,7 @@ const Info: React.FC = () => {
           variant="h4"
           sx={{
             '::after': {
-              content: "' '",
+              content: '\' \'',
               display: 'block',
               height: 3,
               width: 100,
