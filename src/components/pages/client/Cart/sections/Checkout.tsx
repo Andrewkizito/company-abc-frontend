@@ -10,11 +10,11 @@ import {
   Step,
   StepLabel,
   Stepper,
-  Typography
+  Typography,
 } from '@mui/material'
 import {
   KeyboardArrowLeftOutlined,
-  KeyboardArrowRightOutlined
+  KeyboardArrowRightOutlined,
 } from '@mui/icons-material'
 import { Store } from 'react-notifications-component'
 import { notificationsTheme } from 'src/utils/theme'
@@ -24,7 +24,7 @@ import Summary from './subSections/Summary'
 const steps: string[] = ['Fill In Details', 'Confirm Order Details']
 
 interface CheckoutProps {
-  cart: CartItem[]
+  cart: CartItem[];
 }
 
 const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
@@ -34,25 +34,25 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
   const [loading, setLoading] = useState<boolean>(false)
   // User details state
   const [form, setForm] = useState<{
-    name: string
-    phoneNumber: string
-    location: string
+    name: string;
+    phoneNumber: string;
+    location: string;
   }>({
     name: '',
     location: '',
-    phoneNumber: ''
+    phoneNumber: '',
   })
 
   //Get form state
-  const formIsValid:boolean = useMemo(() => {
+  const formIsValid: boolean = useMemo(() => {
     let validity = true
-    for(const key in form){
+    for (const key in form) {
       const value: string = form[key as keyof typeof form]
-      if(value === ''){
+      if (value === '') {
         validity = false
       }
     }
-    return  validity
+    return validity
   }, [form])
 
   // Calculating total cost of all items in cart.
@@ -61,7 +61,6 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
     cart.forEach((item) => (result = result + item.price))
     return result
   }, [cart])
-
 
   return (
     <Box my={'0.4rem'} py={'1rem'}>
@@ -84,7 +83,9 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
       )}
       <Box display={'flex'}>
         <Button
-          onClick={() => { setStep((prevValue) => prevValue - 1) }}
+          onClick={() => {
+            setStep((prevValue) => prevValue - 1)
+          }}
           disabled={activeStep === 0 || loading}
           color="inherit"
         >
@@ -93,14 +94,21 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
         </Button>
         <Button
           onClick={() => {
-            if (formIsValid) setStep((prevValue) => prevValue + 1)
-            else {
+            if (formIsValid) {
+              const regex = /^\+256\d\d\d\d\d\d\d\d\d$/i
+
+              if (regex.test(form.phoneNumber)) {
+                setStep((prevValue) => prevValue + 1)
+              } else {
+                window.alert('Phone Number should start with +256xxxxxxxxx')
+              }
+            } else {
               Store.addNotification({
                 ...notificationsTheme,
                 type: 'warning',
                 title: 'Warning',
                 message:
-                  'Your name, phone number and location are all required'
+                  'Your name, phone number and location are all required',
               })
             }
           }}
@@ -116,7 +124,7 @@ const Checkout: React.FC<CheckoutProps> = ({ cart }) => {
 }
 
 Checkout.propTypes = {
-  cart: propTypes.array.isRequired
+  cart: propTypes.array.isRequired,
 }
 
 export default Checkout

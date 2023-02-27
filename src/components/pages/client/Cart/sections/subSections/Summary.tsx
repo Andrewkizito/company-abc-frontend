@@ -55,46 +55,54 @@ const Summary: React.FC<SummaryProps> = ({
 
   // Place order function
   function placeOrder(): void {
-    // Start loading
-    setLoading(true)
+    const regex = /^\+256\d\d\d\d\d\d\d\d\d$/i
 
-    // Generating paylaod
-    const payload: any = {
-      ...form,
-      totalPrice,
-      cart,
+    if (regex.test(form.phoneNumber)) {
+      // Start loading
+      setLoading(true)
+
+      // Generating paylaod
+      const payload: any = {
+        ...form,
+        totalPrice,
+        cart,
+      }
+
+      //Sending order request to backend
+      api
+        .post('/orders', payload)
+        .then((res: AxiosResponse) => {
+          //Showing success notification
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'success',
+            title: 'Done',
+            message: res.data,
+            //Clearing cart once the notification has been removed
+            onRemoval: () => {
+              dispatch(clearCart(null))
+              navigate('/')
+            },
+          })
+        })
+        .catch((err) => {
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'danger',
+            title: 'Error',
+            message: erroMessage,
+          })
+        })
+        .finally(() => {
+          // Stopping loading once promise has resolved
+          setLoading(false)
+        })
+    } else {
+      window.alert('Phone Number should start with +256xxxxxxxxx')
     }
-
-    //Sending order request to backend
-    api
-      .post('/orders', payload)
-      .then((res: AxiosResponse) => {
-        //Showing success notification
-        Store.addNotification({
-          ...notificationsTheme,
-          type: 'success',
-          title: 'Done',
-          message: res.data,
-          //Clearing cart once the notification has been removed
-          onRemoval: () => {
-            dispatch(clearCart(null))
-            navigate('/')
-          },
-        })
-      })
-      .catch((err) => {
-        const erroMessage: string = err.response ? err.response.data : err.message
-        Store.addNotification({
-          ...notificationsTheme,
-          type: 'danger',
-          title: 'Error',
-          message: erroMessage
-        })
-      })
-      .finally(() => {
-        // Stopping loading once promise has resolved
-        setLoading(false)
-      })
   }
 
   return (
