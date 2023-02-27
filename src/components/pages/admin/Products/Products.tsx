@@ -10,6 +10,7 @@ import Layout from '../core/Layout'
 import Listing from './sections/Listing'
 import ProductManager from './sections/ProductManager'
 
+// TabPanelProps
 interface TabPanelProps {
   children?: React.ReactNode
   dir?: string
@@ -37,6 +38,7 @@ const TabPanel: React.FC<TabPanelProps> = (props) => {
   )
 }
 
+// Tabpanel proptypes
 TabPanel.propTypes = {
   children: propsTypes.any,
   dir: propsTypes.string.isRequired,
@@ -45,11 +47,8 @@ TabPanel.propTypes = {
 }
 
 const Products: React.FC = () => {
+  // State to control tabs
   const [value, setValue] = useState<number>(0)
-
-  const handleChange = (e: any, newValue: number): void => {
-    setValue(newValue)
-  }
 
   return (
     <Layout>
@@ -57,7 +56,7 @@ const Products: React.FC = () => {
         <AppBar position="static" color="default">
           <Tabs
             value={value}
-            onChange={handleChange}
+            onChange={(e, newValue: number) => setValue(newValue)}
             indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
