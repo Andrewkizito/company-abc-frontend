@@ -1,7 +1,7 @@
 // Importing helper functions
 import { type AxiosResponse } from 'axios'
 import { authSuccess } from 'src/context/authSlice'
-import { api, updateState, validateObject } from 'src/utils/modules'
+import { api, updateState } from 'src/utils/modules'
 import { Store } from 'react-notifications-component'
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -13,18 +13,26 @@ import { Spinner } from 'react-activity'
 import TextInput from 'src/components/ui/TextInput'
 
 const Login: React.FC = () => {
+  //Function to trigger action on global state
   const dispatch = useDispatch()
+
+  //User login details
   const [form, setForm] = useState<Record<string, string>>({
     username: '',
     password: ''
   })
+
+  // Loading state
   const [loading, setLoading] = useState<boolean>(false)
 
+  // Authentication handler
   function submit (): void {
     // Checking if form only includes valid values
-    const isFormValid: boolean = validateObject(form)
+    const isFormValid = !Object.values(form).includes('')
     if (isFormValid) {
+      //Start loading
       setLoading(true)
+      //Sending credentials to backend for authentication
       api
         .post('auth/login', { ...form })
         .then((res: AxiosResponse) => {
@@ -34,12 +42,13 @@ const Login: React.FC = () => {
             title: 'Done',
             message: 'Credentials authenticated successfully',
             onRemoval: () => {
+              /* Changing global authentication state to true once
+                 credentials have been successfully authenticated */
               dispatch(authSuccess(res.data))
             }
           })
         })
         .catch((err) => {
-          console.log(err)
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
@@ -47,7 +56,9 @@ const Login: React.FC = () => {
             message: err.response.data
           })
         })
-        .finally(() => { setLoading(false) })
+        .finally(() => { 
+          //Stop loading
+          setLoading(false) })
     }
   }
 
