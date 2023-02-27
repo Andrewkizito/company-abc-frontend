@@ -25,7 +25,7 @@ export interface Order {
   phoneNumber: string;
   orderStatus: OrderStatus;
   totalPrice: number;
-  smsEndpoint: string;
+  location: string;
   cart: CartItem[];
 }
 
