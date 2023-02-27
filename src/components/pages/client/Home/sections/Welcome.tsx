@@ -7,7 +7,7 @@ const Welcome: React.FC = () => {
       height={600}
       sx={{
         backgroundImage:
-          "linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url('/bg.jpg')",
+          'linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),url(\'/bg.jpg\')',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         display: 'flex',
