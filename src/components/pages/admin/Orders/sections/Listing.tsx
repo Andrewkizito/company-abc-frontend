@@ -167,6 +167,45 @@ const OrderListing: React.FC<OrderListingProps> = ({ data, refetch }) => {
     }
   }
 
+  //Complete Order function
+  function completeOrder(id: string): void {
+    if (id) {
+      //Start loading
+      setLoading('Approving Order, Please Wait')
+      //Sending credentials to backend for authentication
+      api
+        .patch(
+          'orders/complete',
+          { _id: id },
+          { headers: { Authorization: token } }
+        )
+        .then((res: AxiosResponse) => {
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'success',
+            title: 'Done',
+            message: res.data,
+            onRemoval: () => refetch(true),
+          })
+        })
+        .catch((err) => {
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
+          Store.addNotification({
+            ...notificationsTheme,
+            type: 'danger',
+            title: 'Error',
+            message: erroMessage,
+          })
+        })
+        .finally(() => {
+          //Stop loading
+          setLoading('')
+        })
+    }
+  }
+
   // Data slots
   const dataSlots: CartProps[] = useMemo(() => {
     return [
@@ -243,14 +282,16 @@ const OrderListing: React.FC<OrderListingProps> = ({ data, refetch }) => {
               mt="2rem"
               fontSize={'0.9rem'}
               variant="h6"
+              textTransform={'capitalize'}
             >
-              Pending Orders.
+              {dataMapping[value].toLocaleLowerCase()} Orders.
             </Typography>
             <TableData
               data={data}
               activeSlot={dataMapping[value].toLocaleLowerCase()}
               addActions={value === 0 && true}
               approveOrder={approveOrder}
+              completeOrder={completeOrder}
               rejectOrder={(id: string, reason: string) =>
                 rejectOrder(id, reason)
               }
