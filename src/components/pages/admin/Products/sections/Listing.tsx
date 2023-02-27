@@ -1,7 +1,7 @@
 // Importing helper modules
 import { api, getImageUrl } from 'src/utils/modules'
 import { type AuthState } from 'src/context/authSlice'
-import { AxiosError, type AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import { type ShopItem } from 'src/context/shopSlice'
 import { useSelector } from 'react-redux'
 import { useState, useEffect } from 'react'
@@ -26,12 +26,12 @@ const Listing: React.FC = () => {
       api
         .get('/products', { headers: { Authorization: token } })
         .then((res: AxiosResponse) => { setData(res.data) })
-        .catch((err: AxiosError) => {
+        .catch((err) => {
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: err.message
+            message: err.response.data
           })
         })
         .finally(() => { setLoading(false) })
