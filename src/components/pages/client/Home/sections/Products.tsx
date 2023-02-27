@@ -1,5 +1,5 @@
 // Importing helper modules
-import { type AxiosResponse } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
 import { api } from 'src/utils/modules'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,12 +30,13 @@ const Products: React.FC = () => {
       api
         .get('/products', { headers: { Authorization: 'hello' } })
         .then((res: AxiosResponse) => dispatch(initShop(res.data)))
-        .catch((err: any) => {
+        .catch((err) => {
+          const erroMessage: string = err.response ? err.response.data : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: err.response.data
+            message: erroMessage
           })
         })
         .finally(() => { setLoading(false) })
