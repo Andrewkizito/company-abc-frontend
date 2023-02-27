@@ -13,7 +13,8 @@ const Product: React.FC<ShopItem> = ({
   price,
   rating,
   image,
-  unit
+  unit,
+  stock
 }) => {
   // Function to dispatch actions
   const dispatch = useDispatch()
@@ -58,19 +59,24 @@ const Product: React.FC<ShopItem> = ({
         </Box>
         <Button
           onClick={() =>
-            dispatch(
-              addItemToCart({
-                productName,
-                price,
-                quantity: 1,
-                unit
-              })
-            )
+            {
+              if(stock > 0){
+                dispatch(
+                  addItemToCart({
+                    productName,
+                    price,
+                    quantity: 1,
+                    unit
+                  })
+                )
+              }
+            }
           }
+          disabled={stock < 1}
           variant="contained"
           fullWidth
         >
-          Add To Cart
+          {stock < 1 ? 'Out Of Stock' : 'Add To Cart'}
         </Button>
       </Box>
     </Box>
@@ -83,7 +89,8 @@ Product.propTypes = {
   price: propTypes.number.isRequired,
   rating: propTypes.number.isRequired,
   image: propTypes.string.isRequired,
-  unit: propTypes.string.isRequired
+  unit: propTypes.string.isRequired,
+  stock: propTypes.number.isRequired
 }
 
 export default Product
