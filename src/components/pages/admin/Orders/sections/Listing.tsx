@@ -21,9 +21,13 @@ import {
   DoNotDisturb,
   PendingActionsOutlined,
 } from '@mui/icons-material'
+import NoData from 'src/components/ui/NoData'
+
+type RefetchFunction = (value: boolean) => void;
 
 interface OrderListingProps {
   data: Orders;
+  refetch: RefetchFunction;
 }
 
 type ApproveOrderPayload = {
@@ -42,7 +46,7 @@ type RejectOrderPayload = {
   phoneNumber: string;
 };
 
-const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
+const OrderListing: React.FC<OrderListingProps> = ({ data, refetch }) => {
   // Get Auth token
   const { token } = useSelector((state: { auth: AuthState }) => state.auth)
 
@@ -54,6 +58,24 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
 
   // UI Tabs to hold orders
   const tabs: OrderStatus[] = ['APPROVED', 'REJECTED', 'COMPLETED']
+
+  // Data mapping
+  const dataMapping: { [key: number]: OrderStatus } = {
+    0: 'PENDING',
+    1: 'APPROVED',
+    2: 'REJECTED',
+    3: 'COMPLETED',
+  }
+
+  // Generating data depending on active step
+  const currentDataSet: Order[] = useMemo(() => {
+    const currentData =
+      data[dataMapping[value].toLowerCase() as keyof typeof data]
+    if (typeof currentData === 'number') {
+      return []
+    }
+    return currentData
+  }, [value])
 
   //Approve Order function
   function approveOrder(id: string): void {
@@ -74,21 +96,23 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
       api
         .patch('orders/approve', payload, { headers: { Authorization: token } })
         .then((res: AxiosResponse) => {
-          console.log(res)
           Store.addNotification({
             ...notificationsTheme,
             type: 'success',
             title: 'Done',
             message: res.data,
+            onRemoval: () => refetch(true),
           })
         })
         .catch((err) => {
-          const erroMessage: string = err.response ? err.response.data : err.message
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: erroMessage
+            message: erroMessage,
           })
         })
         .finally(() => {
@@ -122,15 +146,18 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
             type: 'success',
             title: 'Done',
             message: res.data,
+            onRemoval: () => refetch(true),
           })
         })
         .catch((err) => {
-          const erroMessage: string = err.response ? err.response.data : err.message
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: erroMessage
+            message: erroMessage,
           })
         })
         .finally(() => {
@@ -140,26 +167,36 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
     }
   }
 
+  // Data slots
   const dataSlots: CartProps[] = useMemo(() => {
     return [
       {
         title: 'Total Orders',
-        icon: <AttachMoneyOutlined sx={{ fontSize: '3.5rem' }} color="warning"/>,
+        icon: (
+          <AttachMoneyOutlined sx={{ fontSize: '3.5rem' }} color="warning" />
+        ),
         count: data.total,
       },
       {
         title: 'Pending Orders',
-        icon: <PendingActionsOutlined sx={{ fontSize: '3.5rem' }} color="primary" />,
+        icon: (
+          <PendingActionsOutlined sx={{ fontSize: '3.5rem' }} color="primary" />
+        ),
         count: data.pending.length,
       },
       {
         title: 'Approved Orders',
-        icon: <CheckCircleOutlineOutlined sx={{ fontSize: '3.5rem' }} color="success"/>,
+        icon: (
+          <CheckCircleOutlineOutlined
+            sx={{ fontSize: '3.5rem' }}
+            color="success"
+          />
+        ),
         count: data.approved.length,
       },
       {
         title: 'Rejected Orders',
-        icon: <DoNotDisturb sx={{ fontSize: '3.5rem' }} color="error"/>,
+        icon: <DoNotDisturb sx={{ fontSize: '3.5rem' }} color="error" />,
         count: data.rejected.length,
       },
     ]
@@ -211,12 +248,20 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
             </Typography>
             <TableData
               data={data}
-              addActions={true}
+              activeSlot={dataMapping[value].toLocaleLowerCase()}
+              addActions={value === 0 && true}
               approveOrder={approveOrder}
               rejectOrder={(id: string, reason: string) =>
                 rejectOrder(id, reason)
               }
             />
+            {currentDataSet.length === 0 && (
+              <NoData
+                label={`No ${dataMapping[
+                  value
+                ].toLocaleLowerCase()} orders found`}
+              />
+            )}
           </Box>
         </>
       )}
@@ -225,7 +270,8 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
 }
 
 OrderListing.propTypes = {
-  data: propTypes.any,
+  data: propTypes.any.isRequired,
+  refetch: propTypes.func.isRequired,
 }
 
 export default OrderListing

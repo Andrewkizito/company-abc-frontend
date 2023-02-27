@@ -11,6 +11,7 @@ import { Box, Grid, Rating, Typography } from '@mui/material'
 import { notificationsTheme } from 'src/utils/theme'
 import { Store } from 'react-notifications-component'
 import Loader from 'src/components/ui/Loader'
+import NoData from 'src/components/ui/NoData'
 
 const Listing: React.FC = () => {
   // Getting auth token
@@ -25,17 +26,23 @@ const Listing: React.FC = () => {
     if (loading) {
       api
         .get('/products', { headers: { Authorization: token } })
-        .then((res: AxiosResponse) => { setData(res.data) })
+        .then((res: AxiosResponse) => {
+          setData(res.data)
+        })
         .catch((err) => {
-          const erroMessage: string = err.response ? err.response.data : err.message
+          const erroMessage: string = err.response
+            ? err.response.data
+            : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: erroMessage
+            message: erroMessage,
           })
         })
-        .finally(() => { setLoading(false) })
+        .finally(() => {
+          setLoading(false)
+        })
     }
   }, [loading, token])
 
@@ -44,54 +51,61 @@ const Listing: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={3}>
-        {data?.map((item, i) => (
-          <Grid key={i} item xs={12} sm={6} md={4}>
-            <Box sx={{ border: '1px solid #ccc' }}>
-              <Box
-                sx={{
-                  img: {
-                    width: '100%',
-                    height: '100%',
-                    objectPosition: 'center',
-                    objectFit: 'cover'
-                  }
-                }}
-                height={260}
-              >
-                <img src={getImageUrl(item.image)} alt="" />
-              </Box>
-              <Box p="1rem">
-                <Typography fontWeight={600} fontSize={'1rem'} variant="h4">
-                  {item.productName}
-                </Typography>
-                <Typography
-                  color="#555"
-                  mb={'0.5rem'}
-                  fontSize={'0.85rem'}
-                  variant="subtitle1"
-                >
-                  {item.description}
-                </Typography>
+        {data ? (
+          data.map((item, i) => (
+            <Grid key={i} item xs={12} sm={6} md={4}>
+              <Box sx={{ border: '1px solid #ccc' }}>
                 <Box
-                  display={'flex'}
-                  justifyContent="space-between"
-                  alignItems={'center'}
-                  my="1rem"
+                  sx={{
+                    img: {
+                      width: '100%',
+                      height: '100%',
+                      objectPosition: 'center',
+                      objectFit: 'cover',
+                    },
+                  }}
+                  height={260}
                 >
-                  <Typography variant="h6" fontSize={'0.85rem'}>
-                    Price: UGX {item.price} / {item.unit}
+                  <img src={getImageUrl(item.image)} alt="" />
+                </Box>
+                <Box p="1rem">
+                  <Typography fontWeight={600} fontSize={'1rem'} variant="h4">
+                    {item.productName}
                   </Typography>
-                  <Rating
-                    size="small"
-                    readOnly
-                    value={item.rating}
-                    precision={0.5}
-                  />
+                  <Typography
+                    color="#555"
+                    mb={'0.5rem'}
+                    fontSize={'0.85rem'}
+                    variant="subtitle1"
+                  >
+                    {item.description}
+                  </Typography>
+                  <Box
+                    display={'flex'}
+                    justifyContent="space-between"
+                    alignItems={'center'}
+                    my="1rem"
+                  >
+                    <Typography variant="h6" fontSize={'0.85rem'}>
+                      Price: UGX {item.price} / {item.unit}
+                    </Typography>
+                    <Rating
+                      size="small"
+                      readOnly
+                      value={item.rating}
+                      precision={0.5}
+                    />
+                  </Box>
                 </Box>
               </Box>
-            </Box>
-          </Grid>
-        ))}
+            </Grid>
+          ))
+        ) : (
+          <NoData
+            label="No Data Available"
+            refetch={(value) => setLoading(value)}
+          />
+        )}
       </Grid>
     </Box>
   )
