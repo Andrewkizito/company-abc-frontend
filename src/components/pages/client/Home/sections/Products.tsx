@@ -1,5 +1,5 @@
 // Importing helper modules
-import { AxiosError, type AxiosResponse } from 'axios'
+import { type AxiosResponse } from 'axios'
 import { api } from 'src/utils/modules'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'

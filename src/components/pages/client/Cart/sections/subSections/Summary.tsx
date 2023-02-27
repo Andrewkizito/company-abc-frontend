@@ -82,13 +82,13 @@ const Summary: React.FC<SummaryProps> = ({
           },
         })
       })
-      .catch((err: any) => {
-        // Showing error notification
+      .catch((err) => {
+        const erroMessage: string = err.response ? err.response.data : err.message
         Store.addNotification({
           ...notificationsTheme,
           type: 'danger',
           title: 'Error',
-          message: err.response.data,
+          message: erroMessage
         })
       })
       .finally(() => {

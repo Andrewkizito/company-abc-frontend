@@ -83,11 +83,12 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
           })
         })
         .catch((err) => {
+          const erroMessage: string = err.response ? err.response.data : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: err.response.data,
+            message: erroMessage
           })
         })
         .finally(() => {
@@ -124,11 +125,12 @@ const OrderListing: React.FC<OrderListingProps> = ({ data }) => {
           })
         })
         .catch((err) => {
+          const erroMessage: string = err.response ? err.response.data : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: err.response.data,
+            message: erroMessage
           })
         })
         .finally(() => {

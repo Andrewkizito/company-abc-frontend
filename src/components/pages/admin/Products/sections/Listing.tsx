@@ -27,11 +27,12 @@ const Listing: React.FC = () => {
         .get('/products', { headers: { Authorization: token } })
         .then((res: AxiosResponse) => { setData(res.data) })
         .catch((err) => {
+          const erroMessage: string = err.response ? err.response.data : err.message
           Store.addNotification({
             ...notificationsTheme,
             type: 'danger',
             title: 'Error',
-            message: err.response.data
+            message: erroMessage
           })
         })
         .finally(() => { setLoading(false) })
