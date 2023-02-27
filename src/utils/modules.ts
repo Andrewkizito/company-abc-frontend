@@ -5,6 +5,10 @@ export const api: AxiosInstance = axios.create({
   baseURL: 'http://localhost:5000',
 })
 
+export function getImageUrl(key: string): string {
+  return `http://localhost:5000/images/${key}`
+}
+
 export function updateState(
   field: string,
   value: string | number,
@@ -23,8 +27,4 @@ export function validateObject(data: Record<string, string | number>): boolean {
     if (valueToBoolean) validity = false
   }
   return validity
-}
-
-export function getImageUrl(key: string): string {
-  return `http://localhost:5000/images/${key}`
 }
