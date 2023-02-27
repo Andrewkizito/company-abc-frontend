@@ -73,15 +73,23 @@ const Orders: React.FC = () => {
   return (
     <Layout>
       <Container maxWidth="xl">
-        {loading && <Loader label="Loading Products, Please Wait" />}
-        {data && data.total > 0 && (
-          <OrderListing data={data} refetch={(value) => setLoading(value)} />
-        )}
-        {data?.total === 0 && (
-          <NoData
-            label="No Data Available"
-            refetch={(value) => setLoading(value)}
-          />
+        {loading ? (
+          <Loader label="Loading Products, Please Wait" />
+        ) : (
+          <>
+            {data && data.total > 0 && (
+              <OrderListing
+                data={data}
+                refetch={(value) => setLoading(value)}
+              />
+            )}
+            {data?.total === 0 && (
+              <NoData
+                label="No Data Available"
+                refetch={(value) => setLoading(value)}
+              />
+            )}
+          </>
         )}
       </Container>
     </Layout>
