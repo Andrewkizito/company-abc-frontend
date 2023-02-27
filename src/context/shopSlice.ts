@@ -3,6 +3,7 @@
 import { createSlice, type PayloadAction, type Slice } from '@reduxjs/toolkit'
 
 export interface ShopItem {
+  _id?: string;
   productName: string;
   description: string;
   price: number;
