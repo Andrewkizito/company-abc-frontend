@@ -5,6 +5,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## Getting Started
 After cloning this project, there are several scripts available that you can use inorder to setup the application correctly. The application utilises a backedn taht is powered by nodejs/express and thst can be [found here](https://github.com/Andrewkizito/company-abc-backend). Make sure the application is running on the same server as this application else you will new to update the config file found at `/src/utils/module.ts`
 
+### Applciation requirements
+- Nodejs - (min verison 17x)
+
 ### Available scripts
 #### `npm install`
 
@@ -45,5 +48,3 @@ Will have access to the admin panel with extended functionality which includes
 
 ### Authentication
 The application uses token based authentication utilizing a `username - admin` and `password - Kitab777!`. When the credentials are sent to the backend, a jwt token is generated with and expiry of 2 hours. This can be used to perform actions in the admin panel util its invalid and you will be required to login again.
-
-
