@@ -12,12 +12,8 @@ const Sidebar: React.FC = () => {
   // Paths
   const routes: Array<{ title: string, path: string }> = [
     {
-      title: 'Dashboard',
-      path: '/admin'
-    },
-    {
       title: 'Products',
-      path: '/admin/products'
+      path: '/admin'
     },
     {
       title: 'Orders',
